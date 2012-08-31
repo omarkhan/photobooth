@@ -1,7 +1,19 @@
 socket = io.connect 'http://localhost:8000'
 
 running = false
-div = document.getElementById 'main'
+photoDiv = document.getElementById 'photo'
+
+showPhotos = (photos) ->
+    if photos.length
+        console.log 'SHOWING PHOTO'
+        img = photos[0]
+        photoDiv.style.display = 'block'
+        photoDiv.innerHTML = "<img src=\"#{img}\"/>"
+        setTimeout ->
+            showPhotos photos[1..]
+        , 5000
+    else
+        photoDiv.style.display = 'none'
 
 window.onkeypress = (evt) ->
     if running
@@ -11,8 +23,14 @@ window.onkeypress = (evt) ->
 
 socket.on 'done', (response) ->
     running = false
-    div.innerHTML = ("<img src=\"file://#{img}\"/>" for img in response).join '\n'
+    showPhotos response
 
 socket.on 'fail', ->
     running = false
-    div.textContent = 'Something went wrong, sorry! Try again'
+
+onMedia = (stream) ->
+    output = document.getElementsByTagName('video')[0]
+    source = window.webkitURL.createObjectURL stream
+    output.src = source
+
+navigator.webkitGetUserMedia { video: true, audio: false }, onMedia, ->

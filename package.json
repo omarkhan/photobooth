@@ -1,0 +1,18 @@
+{
+  "name": "photobooth",
+  "version": "0.0.1",
+  "author": "Omar Khan <omar@omarkhan.me>",
+  "scripts": {
+    "start": "./server.coffee"
+  },
+  "dependencies": {
+    "async": "",
+    "imagemagick": "",
+    "socket.io": "",
+    "mime": ""
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.6"
+  }
+}

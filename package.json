@@ -2,6 +2,10 @@
   "name": "photobooth",
   "version": "0.0.1",
   "author": "Omar Khan <omar@omarkhan.me>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omarkhan/photobooth.git"
+  },
   "scripts": {
     "start": "./server.coffee"
   },

@@ -28,8 +28,8 @@ thumbnail = (path, callback) ->
     im.resize
         srcPath: path
         dstPath: dest
-        width: 1024
-        height: 600
+        width: 1440
+        height: 900
     , (err) ->
         if err?
             callback err

@@ -14,6 +14,15 @@ displayed on the screen for the amusement of everyone present.
 
 - A webkit based browser (it could probably be tweaked to work in any modern
   browser now, but back when I wrote it only webkit had the necessary apis)
-- CoffeeScript `npm install -g coffee-script`
-- gphoto2 `sudo apt-get install gphoto2`
-- Other things from npm `npm install`
+- gphoto2 `sudo apt-get install gphoto2` or `brew install gphoto2`
+- ImageMagick `sudo apt-get install imagemagick` or `brew install imagemagick`
+- Dependencies from npm `npm install`
+
+### Running
+
+This should do it:
+
+```
+npm start
+open http://localhost:8000/
+```

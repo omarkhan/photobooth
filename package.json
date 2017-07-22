@@ -1,6 +1,6 @@
 {
   "name": "photobooth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Omar Khan <omar@omarkhan.me>",
   "repository": {
     "type": "git",
@@ -10,10 +10,11 @@
     "start": "./server.coffee"
   },
   "dependencies": {
-    "async": "",
-    "imagemagick": "",
-    "socket.io": "",
-    "mime": ""
+    "async": "2.5.0",
+    "coffee-script": "1.12.7",
+    "imagemagick": "0.1.3",
+    "mime": "1.3.6",
+    "socket.io": "2.0.3"
   },
   "license": "MIT",
   "engines": {

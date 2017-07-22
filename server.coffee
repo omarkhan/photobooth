@@ -31,8 +31,10 @@ thumbnail = (path, callback) ->
         width: 1024
         height: 600
     , (err) ->
-        if err? then callback err
-        callback null, dest
+        if err?
+            callback err
+        else
+            callback null, dest
 
 
 # Set up socket interface

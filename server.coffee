@@ -20,6 +20,7 @@ app = http.createServer (request, response) ->
         response.writeHead 200, { 'Content-Type': mimetype }
         response.end data
 
+console.log 'Listening on port 8000...'
 app.listen 8000
 
 
@@ -42,17 +43,20 @@ running = false
 io = require('socket.io').listen app
 io.sockets.on 'connection', (socket) ->
     socket.on 'photo', ->
-        console.log 'PHOTO'
+        console.log 'Photo requested'
         if running
+            console.log 'Already taking pictures, skipping'
             return
         running = true
         exec "gphoto2 --frames=4 --interval=1 --capture-image-and-download --filename='#{__dirname}/photos/%Y-%m-%dT%H:%M:%S.jpg'", (err, stdout, stderr) ->
             running = false
             if err?
+                console.error err
                 return socket.emit 'fail'
             lines = stdout.match /^Saving file as .*$/gm
             paths = (l.replace /^Saving file as /, '' for l in lines)
             async.map paths, thumbnail, (err, thumbs) ->
                 if err?
+                    console.error err
                     return socket.emit 'fail'
                 socket.emit 'done', (t.replace __dirname, '' for t in thumbs)

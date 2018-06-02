@@ -24,24 +24,26 @@ console.log 'Listening on port 8000...'
 app.listen 8000
 
 
+dimensions =
+    width: 1440
+    height: 900
+
 thumbnail = (path, callback) ->
     dest = path.replace '/photos/', '/thumbnails/'
-    im.resize
-        srcPath: path
-        dstPath: dest
-        width: 1440
-        height: 900
-    , (err) ->
-        if err?
-            callback err
-        else
-            callback null, dest
+    opts = Object.assign {}, dimensions, srcPath: path, dstPath: dest
+    im.resize opts, (err) -> callback err, dest
 
 
 # Set up socket interface
 running = false
 io = require('socket.io').listen app
 io.sockets.on 'connection', (socket) ->
+
+    socket.on 'dimensions', ({ width, height }) ->
+        console.log "Setting thumbnail dimensions to #{width}x#{height}"
+        dimensions.width = width
+        dimensions.height = height
+
     socket.on 'photo', ->
         console.log 'Photo requested'
         if running

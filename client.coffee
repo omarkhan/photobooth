@@ -1,5 +1,7 @@
 socket = io.connect 'http://localhost:8000'
 
+socket.emit 'dimensions', width: screen.width, height: screen.height
+
 running = false
 photoDiv = document.getElementById 'photo'
 

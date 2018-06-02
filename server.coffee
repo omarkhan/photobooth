@@ -1,11 +1,11 @@
 #!/usr/bin/env coffee
 
-{exec} = require 'child_process'
-fs     = require 'fs'
-http   = require 'http'
-async  = require 'async'
-im     = require 'imagemagick'
-mime   = require 'mime'
+{exec, spawn} = require 'child_process'
+fs            = require 'fs'
+http          = require 'http'
+async         = require 'async'
+im            = require 'imagemagick'
+mime          = require 'mime'
 
 
 # Serve index.html
@@ -32,6 +32,16 @@ thumbnail = (path, callback) ->
     dest = path.replace '/photos/', '/thumbnails/'
     opts = Object.assign {}, dimensions, srcPath: path, dstPath: dest
     im.resize opts, (err) -> callback err, dest
+
+
+print = (paths) ->
+    now = new Date()
+    date = new Date(now - now.getTimezoneOffset() * 60000).toISOString().replace(/\..*?$/, '')
+    dest = "#{__dirname}/prints/#{date}.jpg"
+    montage = spawn 'montage', [paths..., '-geometry', '890x590>+5+5', dest], stdio: 'inherit'
+    montage.on 'close', (code) ->
+        return if code != 0
+        exec "lpr -o landscape #{dest}"
 
 
 # Set up socket interface
@@ -62,6 +72,7 @@ io.sockets.on 'connection', (socket) ->
                     console.error err
                     return socket.emit 'fail'
                 socket.emit 'done', (t.replace __dirname, '' for t in thumbs)
+            print paths
 
 
 # Open the browser

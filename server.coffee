@@ -60,3 +60,7 @@ io.sockets.on 'connection', (socket) ->
                     console.error err
                     return socket.emit 'fail'
                 socket.emit 'done', (t.replace __dirname, '' for t in thumbs)
+
+
+# Open the browser
+exec 'open http://localhost:8000'

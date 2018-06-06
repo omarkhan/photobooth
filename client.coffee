@@ -30,9 +30,7 @@ socket.on 'done', (response) ->
 socket.on 'fail', ->
     running = false
 
-onMedia = (stream) ->
-    output = document.getElementsByTagName('video')[0]
-    source = window.webkitURL.createObjectURL stream
-    output.src = source
-
-navigator.webkitGetUserMedia { video: true, audio: false }, onMedia, ->
+navigator.mediaDevices.getUserMedia video: true, audio: false
+    .then (stream) ->
+        video = document.getElementsByTagName('video')[0]
+        video.srcObject = stream

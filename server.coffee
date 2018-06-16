@@ -8,6 +8,14 @@ im            = require 'imagemagick'
 mime          = require 'mime'
 
 
+logo = null
+if process.argv.length > 2
+    path = "#{__dirname}/tmp/logo.png"
+    im.convert [process.argv[2], '-resize', '300x300>', path], (err) ->
+        throw err if err
+        logo = path
+
+
 # Serve index.html
 app = http.createServer (request, response) ->
     url = if request.url == '/' then '/index.html' else request.url
@@ -34,14 +42,30 @@ thumbnail = (path, callback) ->
     im.resize opts, (err) -> callback err, dest
 
 
-print = (paths) ->
+montage = (paths, dest, callback) ->
+    proc = spawn 'montage', [paths..., '-geometry', '890x590>+5+5', dest], stdio: 'inherit'
+    proc.on 'close', (code) ->
+        if code != 0 then return callback new Error 'Montage failed'
+        callback null, dest
+
+
+compose = (path, logo, dest, callback) ->
+    callback null, path unless logo
+    proc = spawn 'composite', ['-geometry', '+1490+890', logo, path, dest], stdio: 'inherit'
+    proc.on 'close', (code) ->
+        if code != 0 then return callback new Error 'Composite failed'
+        callback null, path
+
+
+print = (paths, logo) ->
     now = new Date()
     date = new Date(now - now.getTimezoneOffset() * 60000).toISOString().replace(/\..*?$/, '')
     dest = "#{__dirname}/prints/#{date}.jpg"
-    montage = spawn 'montage', [paths..., '-geometry', '890x590>+5+5', dest], stdio: 'inherit'
-    montage.on 'close', (code) ->
-        return if code != 0
-        exec "lpr -o landscape #{dest}"
+    montage paths, dest, (err) ->
+        return if err
+        compose dest, logo, dest, (err) ->
+            return if err
+            exec "lpr -o landscape #{dest}"
 
 
 # Set up socket interface
@@ -72,7 +96,7 @@ io.sockets.on 'connection', (socket) ->
                     console.error err
                     return socket.emit 'fail'
                 socket.emit 'done', (t.replace __dirname, '' for t in thumbs)
-            print paths
+            print paths, logo
 
 
 # Open the browser
